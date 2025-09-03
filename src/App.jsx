@@ -1,9 +1,34 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import Layout from "./components/layout/Layout";
+import Landing from "./pages/Landing";
+import Auth from "./pages/Auth";
+import Chats from "./pages/Chats";
+
 const App = () => {
-    return (
-        <div className="flex justify-center items-center min-h-screen">
-            <h1 className="text-4xl font-bold">Chatly: Real Time Chat Application</h1>
-        </div>
-    )
+
+    const router = createBrowserRouter([
+        {
+            path: "/",
+            element: <Layout />,
+            children: [
+                {
+                    path: "/",
+                    element: <Landing />                    
+                },
+                {
+                    path: "/auth",
+                    element: <Auth />                    
+                },
+                {
+                    path: "/chats",
+                    element: <Chats />                    
+                }
+            ]
+        }
+    ])
+
+    return <RouterProvider router={router} />
 }
 
 export default App;
