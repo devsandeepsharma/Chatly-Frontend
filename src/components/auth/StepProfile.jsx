@@ -9,6 +9,7 @@ import { motion } from "motion/react";
 import { stepTransition } from "../../animation/Animation";
 import { avatars } from "../../data/avatar";
 import { authActions } from "../../store/authSlice";
+import { uploadImage } from "../../utils/uploadImage";
 
 const StepProfile = () => {
 
@@ -16,7 +17,7 @@ const StepProfile = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [avatar, setAvatar] = useState(user.avatar || avatars[0]);
+    const [avatar, setAvatar] = useState(user?.avatar || avatars[0]);
     const [customFile, setCustomFile] = useState(null);
     const [error, setError] = useState(false);
   
@@ -37,13 +38,19 @@ const StepProfile = () => {
 
     const updateProfile = async (values, actions) => {
         setError("");
+        let finalAvatar = avatar;
+
+        if (customFile) {
+            finalAvatar = await uploadImage(customFile);
+        }
+
         try {
             const res = await axios.post(
                 `${import.meta.env.VITE_API_URL}/api/v1/auth/set-profile`,
-                { avatar, username: values.username },
+                { avatar: finalAvatar, username: values.username },
                 {
                     headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
                     }
                 }
             );
@@ -70,7 +77,7 @@ const StepProfile = () => {
                 Pick a display name and avatar — you can change this later.
             </p>
             <Formik
-                initialValues={{ username: user.username }}
+                initialValues={{ username: user?.username }}
                 validationSchema={profileSchema}
                 onSubmit={(values, actions) => {
                     updateProfile(values, actions);
