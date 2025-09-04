@@ -1,14 +1,22 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 import { motion } from "motion/react";
 import { stepTransition } from "../../animation/Animation";
 import { avatars } from "../../data/avatar";
+import { authActions } from "../../store/authSlice";
 
 const StepProfile = () => {
-    
-    const [avatar, setAvatar] = useState(avatars[0]);
+
+    const { user } = useSelector(state => state.auth);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const [avatar, setAvatar] = useState(user.avatar || avatars[0]);
     const [customFile, setCustomFile] = useState(null);
     const [error, setError] = useState(false);
   
@@ -27,10 +35,26 @@ const StepProfile = () => {
         }
     };
 
-    const updateProfile = (values) => {
-        console.log("Username:", values.username);
-        console.log("Avatar:", avatar);
-        console.log("Custom file:", customFile);
+    const updateProfile = async (values, actions) => {
+        setError("");
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/v1/auth/set-profile`,
+                { avatar, username: values.username },
+                {
+                    headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    }
+                }
+            );
+            const { user } = res.data.data;
+            dispatch(authActions.update(user));
+            navigate("/chats");
+        } catch (err) {
+            setError(err.response?.data?.message || "Profile update failed");
+        } finally {
+            actions.setSubmitting(false);
+        }
     }
 
     return (
@@ -46,9 +70,11 @@ const StepProfile = () => {
                 Pick a display name and avatar — you can change this later.
             </p>
             <Formik
-                initialValues={{ username: "" }}
+                initialValues={{ username: user.username }}
                 validationSchema={profileSchema}
-                onSubmit={updateProfile}
+                onSubmit={(values, actions) => {
+                    updateProfile(values, actions);
+                }}
             >
                 {({ isSubmitting }) => (
                     <Form className="space-y-5">
@@ -109,7 +135,7 @@ const StepProfile = () => {
                                 placeholder="e.g. alex"
                                 className="w-full rounded-xl border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#00BFA6]/50"
                             />
-                            <p className="text-xs font-medium text-red-500">
+                            <p className="text-xs font-medium text-red-500 mt-2">
                                 <ErrorMessage name="username" />
                                 {error && error}
                             </p>
@@ -119,7 +145,7 @@ const StepProfile = () => {
                             disabled={isSubmitting || !avatar}
                             className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-br from-[#00BFA6] to-[#0AE2C3] shadow-lg transform active:scale-95 transition cursor-pointer"
                         >
-                            Save & Continue
+                            { isSubmitting ? "Saving...": "Save & Continue" }
                         </button>
                     </Form>
                 )}

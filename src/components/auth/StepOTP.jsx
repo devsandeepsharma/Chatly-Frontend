@@ -1,13 +1,16 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 
 import { motion } from "motion/react"
 import { stepTransition } from "../../animation/Animation";
+import { authActions } from "../../store/authSlice";
 
 const StepOTP = ({ email, setStep }) => {
 
+    const dispatch = useDispatch();
     const [error, setError] = useState(false);
 
     const otpSchema = Yup.object().shape({
@@ -24,7 +27,9 @@ const StepOTP = ({ email, setStep }) => {
                 `${import.meta.env.VITE_API_URL}/api/v1/auth/verify-otp`, 
                 { email, otp: values.otp }
             );
-            console.log(res.data);
+            const { token, user } = res.data.data;
+            localStorage.setItem("token", token);
+            dispatch(authActions.login(user));
             setStep(3);
         } catch (err) {
             setError(err.response?.data?.message || "OTP verification failed, try again");
@@ -110,7 +115,7 @@ const StepOTP = ({ email, setStep }) => {
                             <ErrorMessage name="otp" />
                             {error && error}
                         </p>
-                        <div className="flex gap-3 mt-3">
+                        <div className="flex gap-3 mt-5">
                             <button 
                                 type="submit" 
                                 disabled={isSubmitting} 

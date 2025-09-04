@@ -1,6 +1,41 @@
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+
+import { authActions } from "../../store/authSlice";
 
 const Layout = () => {
+
+    const token = localStorage.getItem("token");
+    const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+
+            if (!token || user) return;
+
+            try {
+                const res = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/api/v1/user`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                dispatch(authActions.login(res.data.data.user));
+            } catch (err) {
+                console.error("Auth check failed", err);
+                localStorage.removeItem("token");
+                dispatch(authActions.logout());
+            }
+        };
+        fetchUser();
+    }, [token, user, dispatch]);
+
     return (
         <>
             <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">

@@ -1,5 +1,15 @@
+import { useSelector } from "react-redux";
+
 const Chats = () => {
-    return <h2 className="font-medium text-2xl">Chats Page</h2>
+
+    const { user } = useSelector(state => state.auth);
+
+    return (
+        <>
+            <img width={200} height={200} src={user?.avatar} />
+            <h1>Hello {user?.username} 👋</h1>
+        </>
+    )
 }
 
 export default Chats;

@@ -1,12 +1,18 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 
 import { motion } from "motion/react"
 import { stepTransition } from "../../animation/Animation";
+import { authActions } from "../../store/authSlice";
 
 const StepEmail = ({ setStep, setEmail }) => {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [error, setError] = useState(false);
 
@@ -20,8 +26,10 @@ const StepEmail = ({ setStep, setEmail }) => {
         setError("");
         try {
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/auth/guest-login`);
-            setStep(3);
-            console.log(res.data);
+            const { token, user } = res.data.data;
+            localStorage.setItem("token", token);
+            dispatch(authActions.login(user));
+            navigate("/chats");
         } catch (err) {
             setError(err.response?.data?.message || "Guest login failed, try again");
         }
