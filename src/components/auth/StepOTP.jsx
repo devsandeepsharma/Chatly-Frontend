@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 import { motion } from "motion/react"
 import { stepTransition } from "../../animation/Animation";
@@ -16,13 +17,33 @@ const StepOTP = ({ email, setStep }) => {
             .required("OTP is required"),
     });
 
-    const verifyOTP = () => {
-        setStep(3);
-        console.log("OTP VERIFIED");
+    const verifyOTP = async (values, actions) => {
+        setError("");
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/v1/auth/verify-otp`, 
+                { email, otp: values.otp }
+            );
+            console.log(res.data);
+            setStep(3);
+        } catch (err) {
+            setError(err.response?.data?.message || "OTP verification failed, try again");
+        } finally {
+            actions.setSubmitting(false);
+        }
     }
 
-    const resendOTP = () => {
-        console.log("OTP SEND");
+    const resendOTP = async () => {
+        setError("");
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/v1/auth/send-otp`, 
+                { email }
+            );
+            console.log(res.data);
+        } catch (err) {
+            setError(err.response?.data?.message || "Resending OTP failed, try again");
+        }
     }
 
     const backToEmailPage = () => {

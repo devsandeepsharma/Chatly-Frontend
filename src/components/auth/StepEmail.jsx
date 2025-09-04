@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 import { motion } from "motion/react"
 import { stepTransition } from "../../animation/Animation";
@@ -15,15 +16,32 @@ const StepEmail = ({ setStep, setEmail }) => {
             .required("Email is required"),
     });
 
-    const loginAsGuest = () => {
-        console.log("logged in succesfull...");
+    const loginAsGuest = async () => {
+        setError("");
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/v1/auth/guest-login`);
+            setStep(3);
+            console.log(res.data);
+        } catch (err) {
+            setError(err.response?.data?.message || "Guest login failed, try again");
+        }
     }
 
     const sendOTP = async (values, actions) => {
         setError("");
-        setStep(2);
-        setEmail(values.email);
-        console.log("OTP Send");
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/v1/auth/send-otp`, 
+                { email: values.email }
+            );
+            setEmail(values.email);
+            setStep(2);
+            console.log(res.data);
+        } catch (err) {
+            setError(err.response?.data?.message || "Send OTP failed, try again");
+        } finally {
+            actions.setSubmitting(false);
+        }
     }
 
     return (
@@ -73,6 +91,7 @@ const StepEmail = ({ setStep, setEmail }) => {
                         </div>
                         <button
                             type="button"
+                            disabled={isSubmitting}
                             onClick={loginAsGuest}
                             className="w-full py-3 rounded-xl font-semibold shadow-inner text-black bg-[#FFD93D] transform active:scale-95 transition cursor-pointer"
                         >
