@@ -1,6 +1,8 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Layout from "./components/layout/Layout";
+import ProtectedRoute from "./components/layout/ProtectedRoute";
+import PublicRoute from "./components/layout/PublicRoute";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Chats from "./pages/Chats";
@@ -14,7 +16,11 @@ const App = () => {
             children: [
                 {
                     path: "/",
-                    element: <Landing />                    
+                    element: (
+                        <PublicRoute>
+                            <Landing />  
+                        </PublicRoute>
+                    )                  
                 },
                 {
                     path: "/auth",
@@ -22,7 +28,11 @@ const App = () => {
                 },
                 {
                     path: "/chats",
-                    element: <Chats />                    
+                    element: (
+                        <ProtectedRoute>
+                            <Chats />   
+                        </ProtectedRoute>
+                    )                 
                 }
             ]
         }

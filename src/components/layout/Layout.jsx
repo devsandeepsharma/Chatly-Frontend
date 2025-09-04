@@ -14,9 +14,11 @@ const Layout = () => {
     useEffect(() => {
         const fetchUser = async () => {
 
-            if (!token || user) return;
+            if (user) return;
 
             try {
+                if(!token) throw new Error("No token");
+            
                 const res = await axios.get(
                     `${import.meta.env.VITE_API_URL}/api/v1/user`,
                     {
@@ -28,10 +30,9 @@ const Layout = () => {
 
                 dispatch(authActions.login(res.data.data.user));
             } catch (err) {
-                console.error("Auth check failed", err);
                 localStorage.removeItem("token");
                 dispatch(authActions.logout());
-            }
+            } 
         };
         fetchUser();
     }, [token, user, dispatch]);
