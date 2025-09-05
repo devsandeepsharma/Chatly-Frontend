@@ -11,7 +11,7 @@ const Chats = () => {
 
     return (
         <>
-            { modalType === "profile" && <ProfileModal /> }
+            { modalType === "profile" && <ProfileModal user={user} self /> }
             { modalType === "search" && <SearchModal /> }
             <Header />
             <div className="w-sm mx-auto mt-5 border border-gray-200">
