@@ -7,3 +7,9 @@ export const cardVariant = {
 export const stepTransition = {
     type: 'tween', duration: 0.28
 }
+
+export const chatPanelvariants = {
+    hidden: (dir) => ({ opacity: 0, x: dir > 0 ? 100 : -100 }),
+    visible: { opacity: 1, x: 0 },
+    exit: (dir) => ({ opacity: 0, x: dir > 0 ? -100 : 100 }),
+};
