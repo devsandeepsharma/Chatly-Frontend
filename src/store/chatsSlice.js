@@ -4,6 +4,7 @@ const initialState = {
     chats: [],
     suggestedUsers: [],
     selectedChat: null,
+    messages: [],
 };
 
 const chatsSlice = createSlice({
@@ -24,6 +25,12 @@ const chatsSlice = createSlice({
         },
         setSelectedChat(state, action) {
             state.selectedChat = action.payload;
+        },
+        setMessages(state, action) {
+            state.messages = action.payload;
+        },
+        addMessage(state, action) {
+            state.messages.push(action.payload);
         }
     }
 });

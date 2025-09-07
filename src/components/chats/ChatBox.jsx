@@ -1,18 +1,24 @@
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 import ProfileModal from "../profile/ProfileModal";
+import MessageForm from "./MessageForm";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
 import { uiActions } from "../../store/uiSlice";
 import { ArrowLeft, Eye, MessageSquare } from "lucide-react";
+import { chatsActions } from "../../store/chatsSlice";
 
 const ChatBox = ({ handleSwitch }) => {
 
     const isDesktop = useIsDesktop();
     const dispatch = useDispatch();
 
-    const { selectedChat } = useSelector((state) => state.chats);
+    const { selectedChat, messages } = useSelector((state) => state.chats);
     const { modalType } = useSelector(state => state.ui);
     const { user } = useSelector((state) => state.auth);
+
+    const [loading, setLoading] = useState(false);
 
     const otherUser = selectedChat?.isGroupChat
         ? null
@@ -21,6 +27,35 @@ const ChatBox = ({ handleSwitch }) => {
     const viewProfileModel = () => {
         dispatch(uiActions.openModal({ type: "view-profile" }));
     }
+
+    const fetchMessages = useCallback(async () => {
+        if (!selectedChat?._id) return;
+        try {
+            const res = await axios.get(
+                `${import.meta.env.VITE_API_URL}/api/v1/message`,
+                {
+                    params: { chatId: selectedChat._id },
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
+
+            dispatch(chatsActions.setMessages(res.data.data.messages));
+        } catch (err) {
+            console.log(err)
+            console.log(err.response?.data?.message || "Failed to fetch messages");
+        }
+    }, [selectedChat?._id]);
+
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            await fetchMessages();
+            setLoading(false);
+        };
+        loadData();
+    }, [fetchMessages]);
 
     return (
         <div className="h-full flex flex-col">
@@ -55,17 +90,41 @@ const ChatBox = ({ handleSwitch }) => {
                                 </span>
                             </div>
                         </div>
-                        <button 
+                        <button
                             onClick={viewProfileModel}
                             className="py-2 px-4 inline-flex items-center justify-center gap-2 rounded-xl font-semibold text-white bg-gradient-to-br from-[#00BFA6] to-[#0AE2C3] shadow-lg transform active:scale-95 transition cursor-pointer"
                         >
                             <Eye className="h-4 w-4" /> View
                         </button>
                     </div>
-
-                    <div className="flex-1 flex items-center justify-center text-gray-400">
-                        <p>💬 Chat messages will go here</p>
-                    </div>
+                    {
+                        loading ? (
+                            <div className="flex-1 flex items-center justify-center text-gray-400">
+                                <p>Loading messages</p>
+                            </div>
+                        ) : messages.length > 0 ? (
+                            <div className="flex-1 flex flex-col gap-1 justify-end mb-2">
+                                {
+                                    messages.map((msg) => (
+                                        <div
+                                            key={msg._id}
+                                            className={`flex ${msg.sender._id === user._id ? "justify-end" : "justify-start"}`}
+                                        >
+                                            <div className={`flex gap-2 p-2 rounded-lg max-w-xs ${msg.sender._id === user._id ? "bg-teal-500 text-white" : "bg-white shadow"}`}>
+                                                <p className="text-sm">{msg.content}</p>
+                                                <span className="text-xs text-gray-200 block mt-1">{new Date(msg.createdAt).toLocaleTimeString()}</span>
+                                            </div>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        ) : (
+                            <div className="flex-1 flex items-center justify-center text-gray-400">
+                                <p>💬 Chat messages will go here</p>
+                            </div>
+                        )
+                    }
+                    <MessageForm chatId={selectedChat._id} />
                 </>
             ) : (
                 <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">

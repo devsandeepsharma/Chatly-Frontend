@@ -1,3 +1,5 @@
+import { formatTime } from "../../utils/formatTime";
+
 const UserCard = ({ isSelected = false, avatar, title, subtitle, time, onClick }) => {
     return (
         <div
@@ -19,8 +21,8 @@ const UserCard = ({ isSelected = false, avatar, title, subtitle, time, onClick }
                         {title}
                     </h3>
                     {time && (
-                        <span className="ml-2 text-xs text-gray-500 whitespace-nowrap">
-                            {time}
+                        <span className="mr-4 text-xs text-gray-500 whitespace-nowrap">
+                            {formatTime(time)}
                         </span>
                     )}
                 </div>

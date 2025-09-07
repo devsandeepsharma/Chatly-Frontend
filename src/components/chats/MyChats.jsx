@@ -117,7 +117,8 @@ const MyChats = ({ handleSwitch }) => {
                                             isSelected={chat._id === selectedChat?._id}
                                             avatar={chat.isGroupChat ? chat.chatAvatar : otherUser?.avatar}
                                             title={chat.isGroupChat ? chat.chatName : otherUser?.username}
-                                            subtitle={chat.lastMessage?.content || "No messages yet"}
+                                            subtitle={chat.latestMessage?.content || "No messages yet"}
+                                            time={chat.latestMessage ? chat.latestMessage.createdAt : ""}
                                             onClick={() => {
                                                 dispatch(chatsActions.setSelectedChat(chat));
                                                 if (!isDesktop) handleSwitch("right");
