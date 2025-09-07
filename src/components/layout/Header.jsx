@@ -30,7 +30,7 @@ const Header = () => {
                         <Search className="h-4 w-4" /> Search
                     </button>
                     <button
-                        className="w-8 h-8 rounded-full overflow-hidden border-1 border-[#00BFA6]/50 shadow-sm hover:shadow-md transition cursor-pointer"
+                        className="w-8 h-8 rounded-full overflow-hidden border cursor-pointer"
                         aria-label="Profile"
                         onClick={openProfileModel}
                     >
