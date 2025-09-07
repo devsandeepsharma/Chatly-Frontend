@@ -4,6 +4,7 @@ import axios from "axios";
 
 import ProfileModal from "../profile/ProfileModal";
 import MessageForm from "./MessageForm";
+import ChatBubble from "./ChatBubble";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
 import { uiActions } from "../../store/uiSlice";
 import { ArrowLeft, Eye, MessageSquare } from "lucide-react";
@@ -103,18 +104,16 @@ const ChatBox = ({ handleSwitch }) => {
                                 <p>Loading messages</p>
                             </div>
                         ) : messages.length > 0 ? (
-                            <div className="flex-1 flex flex-col gap-1 justify-end mb-2">
+                            <div className="flex-1 flex flex-col gap-1 justify-end mb-5">
                                 {
-                                    messages.map((msg) => (
-                                        <div
-                                            key={msg._id}
-                                            className={`flex ${msg.sender._id === user._id ? "justify-end" : "justify-start"}`}
-                                        >
-                                            <div className={`flex gap-2 p-2 rounded-lg max-w-xs ${msg.sender._id === user._id ? "bg-teal-500 text-white" : "bg-white shadow"}`}>
-                                                <p className="text-sm">{msg.content}</p>
-                                                <span className="text-xs text-gray-200 block mt-1">{new Date(msg.createdAt).toLocaleTimeString()}</span>
-                                            </div>
-                                        </div>
+                                    messages.map((msg, i) => (
+                                        <ChatBubble
+                                            key={msg?._id}
+                                            text={msg?.content}
+                                            time={msg?.createdAt}
+                                            side={msg?.sender?._id === user?._id ? "right" : "left"}
+                                            i={i}
+                                        />
                                     ))
                                 }
                             </div>

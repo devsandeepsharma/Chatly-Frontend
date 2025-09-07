@@ -19,3 +19,26 @@ export const userCardVarient = {
     visible: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -20 },
 }
+
+export const dotVariants = {
+    animate: (i) => ({
+        y: [0, -4, 0],
+        opacity: [0.4, 1, 0.4],
+        transition: {
+            duration: 1,
+            repeat: Infinity,
+            delay: i * 0.2,
+            ease: "easeInOut",
+        },
+    }),
+};
+
+export const bubbleVariants = {
+    hidden: { opacity: 0, y: 16, scale: 0.98 },
+    show: (i) => ({
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: { delay: 0.2 + i * 0.25, duration: 0.6, ease: "easeOut" },
+    }),
+};
