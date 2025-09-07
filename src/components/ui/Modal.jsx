@@ -39,7 +39,7 @@ const Modal = ({ children }) => {
                 >
                     <button
                         onClick={() => dispatch(uiActions.closeModal())}
-                        className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-100 transition cursor-pointer"
+                        className="absolute z-100 top-3 right-3 p-2 rounded-full hover:bg-gray-100 transition cursor-pointer"
                     >
                         <X className="h-5 w-5 text-gray-600" />
                     </button>

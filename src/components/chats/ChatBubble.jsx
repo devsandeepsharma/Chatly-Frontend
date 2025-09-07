@@ -3,7 +3,6 @@ import { bubbleVariants } from "../../animation/Animation";
 
 import TypingDots from "./TypingDots";
 import { formatTime } from "../../utils/formatTime";
-import { MessageCircle } from "lucide-react";
 
 const ChatBubble = ({ text = "", time = "", side = "left", i = 0, isTyping = false }) => {
     return (
