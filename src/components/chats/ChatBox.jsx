@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 import ProfileModal from "../profile/ProfileModal";
+import GroupProfileModal from "../profile/GroupProfileModal";
 import MessageForm from "./MessageForm";
 import ChatBubble from "./ChatBubble";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
 import { uiActions } from "../../store/uiSlice";
-import { ArrowLeft, Eye, MessageSquare } from "lucide-react";
 import { chatsActions } from "../../store/chatsSlice";
+import { ArrowLeft, Eye, MessageSquare } from "lucide-react";
 
 const ChatBox = ({ handleSwitch }) => {
 
@@ -26,7 +27,11 @@ const ChatBox = ({ handleSwitch }) => {
         : selectedChat?.users?.find((u) => u._id !== user._id);
 
     const viewProfileModel = () => {
-        dispatch(uiActions.openModal({ type: "view-profile" }));
+        if(selectedChat.isGroupChat) {
+            dispatch(uiActions.openModal({ type: "view-group-profile" }));
+        } else {
+            dispatch(uiActions.openModal({ type: "view-profile" }));
+        }
     }
 
     const fetchMessages = useCallback(async () => {
@@ -61,6 +66,7 @@ const ChatBox = ({ handleSwitch }) => {
     return (
         <div className="h-full flex flex-col">
             {modalType === "view-profile" && <ProfileModal user={otherUser} />}
+            {modalType === "view-group-profile" && <GroupProfileModal chat={selectedChat} currentUser={user} />}
             {selectedChat ? (
                 <>
                     <div className="sticky top-0 z-40 bg-white/70 w-full flex items-center justify-between py-3 border-b">

@@ -12,9 +12,4 @@ export const groupAvatars = [
     "https://api.dicebear.com/9.x/shapes/svg?seed=Brainstormers",
     "https://api.dicebear.com/9.x/shapes/svg?seed=CodeClan",
     "https://api.dicebear.com/9.x/shapes/svg?seed=CreativeCircle",
-    "https://api.dicebear.com/9.x/shapes/svg?seed=NextGen",
-    "https://api.dicebear.com/9.x/shapes/svg?seed=CollabHub",
-    "https://api.dicebear.com/9.x/shapes/svg?seed=InfinitySquad",
-    "https://api.dicebear.com/9.x/shapes/svg?seed=AlphaTeam",
-    "https://api.dicebear.com/9.x/shapes/svg?seed=BetaGroup"
 ];
