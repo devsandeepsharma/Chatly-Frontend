@@ -27,7 +27,7 @@ const ChatBox = ({ handleSwitch }) => {
         : selectedChat?.users?.find((u) => u._id !== user._id);
 
     const viewProfileModel = () => {
-        if(selectedChat.isGroupChat) {
+        if (selectedChat.isGroupChat) {
             dispatch(uiActions.openModal({ type: "view-group-profile" }));
         } else {
             dispatch(uiActions.openModal({ type: "view-profile" }));
@@ -112,15 +112,26 @@ const ChatBox = ({ handleSwitch }) => {
                         ) : messages.length > 0 ? (
                             <div className="flex-1 flex flex-col gap-1 justify-end mb-5">
                                 {
-                                    messages.map((msg, i) => (
-                                        <ChatBubble
-                                            key={msg?._id}
-                                            text={msg?.content}
-                                            time={msg?.createdAt}
-                                            side={msg?.sender?._id === user?._id ? "right" : "left"}
-                                            i={i}
-                                        />
-                                    ))
+                                    messages.map((msg, i) => {
+                                        const isOwnMessage = msg?.sender?._id === user?._id;
+                                        const side = isOwnMessage ? "right" : "left";
+
+                                        const showSenderName =
+                                            selectedChat?.isGroupChat &&
+                                            side === "left" &&
+                                            (i === 0 || messages[i - 1]?.sender?._id !== msg?.sender?._id);
+
+                                        return (
+                                            <ChatBubble
+                                                key={msg?._id}
+                                                text={msg?.content}
+                                                time={msg?.createdAt}
+                                                side={side}
+                                                i={i}
+                                                isGroup={selectedChat?.isGroupChat}
+                                                senderName={showSenderName ? msg?.sender?.username : ""} // ✅ only first in block
+                                            />)
+                                    })
                                 }
                             </div>
                         ) : (
