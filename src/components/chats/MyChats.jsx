@@ -6,7 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { userCardVarient } from "../../animation/Animation";
 
 import UserCard from "./UserCard";
+import CreateGroupChat from "./CreateGroupChat";
 import { chatsActions } from "../../store/chatsSlice";
+import { uiActions } from "../../store/uiSlice";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
 import { Users } from "lucide-react";
 
@@ -20,6 +22,11 @@ const MyChats = ({ handleSwitch }) => {
         (state) => state.chats
     );
     const { user } = useSelector(state => state.auth);
+    const { modalType } = useSelector(state => state.ui);
+
+    const openGroupChatModel = () => {
+        dispatch(uiActions.openModal({ type: "group-chat" }));
+    }
 
     const accessChat = async (userId) => {
         try {
@@ -87,9 +94,13 @@ const MyChats = ({ handleSwitch }) => {
 
     return (
         <>
+            {modalType === "group-chat" && <CreateGroupChat />}
             <div className="sticky top-0 z-40 bg-white/70 w-full flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-800">All Chats</h2>
-                <button className="py-2 px-4 inline-flex items-center justify-center gap-2 rounded-xl font-semibold text-white bg-gradient-to-br from-[#00BFA6] to-[#0AE2C3] shadow-lg transform active:scale-95 transition cursor-pointer">
+                <button 
+                    className="py-2 px-4 inline-flex items-center justify-center gap-2 rounded-xl font-semibold text-white bg-gradient-to-br from-[#00BFA6] to-[#0AE2C3] shadow-lg transform active:scale-95 transition cursor-pointer"
+                    onClick={openGroupChatModel}
+                >
                     <Users className="h-4 w-4" /> Create Group
                 </button>
             </div>
