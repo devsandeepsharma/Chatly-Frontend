@@ -19,7 +19,7 @@ const MyChats = ({ handleSwitch }) => {
     const isDesktop = useIsDesktop();
 
     const [loading, setLoading] = useState(true);
-    const { chats, suggestedUsers, selectedChat, unReadMessages, incrementUnread } = useSelector(
+    const { chats, suggestedUsers, selectedChat, unReadMessages } = useSelector(
         (state) => state.chats
     );
     const { user } = useSelector(state => state.auth);
@@ -110,6 +110,25 @@ const MyChats = ({ handleSwitch }) => {
         };
         loadData();
     }, [fetchChats, fetchSuggestedUsers]);
+
+    useEffect(() => {
+        const handleMessage = (message) => {
+            dispatch(chatsActions.updateChatLatestMessage({
+                chatId: message.chat._id,
+                message
+            }));
+
+            if (message.chat._id !== selectedChat?._id) {
+                dispatch(chatsActions.incrementUnread({ chatId: message.chat._id }));
+            }
+        };
+
+        socket.on("receiveMessage", handleMessage);
+
+        return () => {
+            socket.off("receiveMessage", handleMessage);
+        };
+    }, [dispatch, selectedChat]);
 
     return (
         <>
