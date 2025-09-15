@@ -22,6 +22,7 @@ const ChatBox = ({ handleSwitch }) => {
     const { user } = useSelector((state) => state.auth);
 
     const [loading, setLoading] = useState(false);
+    const [typingUsers, setTypingUsers] = useState([]);
 
     const otherUser = selectedChat?.isGroupChat
         ? null
@@ -81,6 +82,24 @@ const ChatBox = ({ handleSwitch }) => {
         };
     }, [selectedChat?._id, dispatch]);
 
+    useEffect(() => {
+        socket.on("typing", ({ userId }) => {
+            setTypingUsers(prev => {
+                if (!prev.includes(userId)) return [...prev, userId];
+                return prev;
+            });
+        });
+
+        socket.on("stopTyping", ({ userId }) => {
+            setTypingUsers(prev => prev.filter(id => id !== userId));
+        });
+
+        return () => {
+            socket.off("typing");
+            socket.off("stopTyping");
+        };
+    }, []);
+
     return (
         <div className="flex-1 h-full flex flex-col">
             {modalType === "view-profile" && <ProfileModal user={otherUser} />}
@@ -129,6 +148,13 @@ const ChatBox = ({ handleSwitch }) => {
                             </div>
                         ) : messages.length > 0 ? (
                             <div className="flex-1 px-4 py-2 flex flex-col-reverse gap-1 overflow-y-auto gap-2">
+                                {typingUsers
+                                    .filter(id => id !== user._id)
+                                    .map((id) => {
+                                        const typingUser = selectedChat.users.find(u => u._id === id);
+                                        return <ChatBubble key={id} isTyping senderName={typingUser?.username || "Someone"} />;
+                                    })
+                                }
                                 {
                                     messages.map((msg, i) => {
                                         const isOwnMessage = msg?.sender?._id === user?._id;
