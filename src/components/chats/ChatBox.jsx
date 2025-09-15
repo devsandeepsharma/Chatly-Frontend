@@ -85,22 +85,29 @@ const ChatBox = ({ handleSwitch }) => {
     }, [selectedChat?._id, dispatch]);
 
     useEffect(() => {
-        socket.on("typing", ({ userId }) => {
+        const handleTyping = ({ chatId, userId }) => {
+            if (chatId !== selectedChat?._id) return;
+
             setTypingUsers(prev => {
                 if (!prev.includes(userId)) return [...prev, userId];
                 return prev;
             });
-        });
+        };
 
-        socket.on("stopTyping", ({ userId }) => {
+        const handleStopTyping = ({ chatId, userId }) => {
+            if (chatId !== selectedChat?._id) return;
+
             setTypingUsers(prev => prev.filter(id => id !== userId));
-        });
+        };
+
+        socket.on("typing", handleTyping);
+        socket.on("stopTyping", handleStopTyping);
 
         return () => {
-            socket.off("typing");
-            socket.off("stopTyping");
+            socket.off("typing", handleTyping);
+            socket.off("stopTyping", handleStopTyping);
         };
-    }, []);
+    }, [selectedChat?._id]);
 
     useEffect(() => {
         if (!otherUser) return;
