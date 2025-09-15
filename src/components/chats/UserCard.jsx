@@ -1,4 +1,5 @@
 import { formatTime } from "../../utils/formatTime";
+import { truncateText } from "../../utils/truncateText";
 
 const UserCard = ({ isSelected = false, avatar, title, subtitle, time, unreadCount = 0, onClick }) => {
     return (
@@ -18,7 +19,7 @@ const UserCard = ({ isSelected = false, avatar, title, subtitle, time, unreadCou
             <div className="flex-1">
                 <div className="flex items-center justify-between">
                     <h3 className="truncate text-sm font-semibold text-gray-900 sm:text-base">
-                        {title}
+                        {truncateText(title, 17)}
                     </h3>
                     {time && (
                         <span className="mr-4 text-xs text-gray-500 whitespace-nowrap">
@@ -29,7 +30,7 @@ const UserCard = ({ isSelected = false, avatar, title, subtitle, time, unreadCou
                 <div className="flex items-center justify-between">
                     {subtitle && (
                         <div className="truncate text-sm text-gray-500 sm:text-base">
-                            {subtitle}
+                            {truncateText(subtitle, 15)}
                         </div>
                     )}
                     {unreadCount > 0 && (

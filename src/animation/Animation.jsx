@@ -42,3 +42,13 @@ export const bubbleVariants = {
         transition: { delay: 0.2 + i * 0.25, duration: 0.6, ease: "easeOut" },
     }),
 };
+
+export const staggerContainer = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.12 } },
+};
+
+export const fadeIn = {
+    hidden: { opacity: 0, y: 16 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
