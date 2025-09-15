@@ -5,6 +5,7 @@ const initialState = {
     suggestedUsers: [],
     selectedChat: null,
     messages: [],
+    unReadMessages: {}
 };
 
 const chatsSlice = createSlice({
@@ -48,6 +49,14 @@ const chatsSlice = createSlice({
         addMessage(state, action) {
             state.messages.unshift(action.payload);
         },
+        updateChatLatestMessage(state, action) {
+            const { chatId, message } = action.payload;
+            state.chats = state.chats.map(c =>
+                c._id === chatId
+                    ? { ...c, latestMessage: message }
+                    : c
+            );
+        },
         addUserToChat(state, action) {
             const chat = state.chats.find(c => c._id === action.payload.chatId);
             if (chat) {
@@ -64,6 +73,20 @@ const chatsSlice = createSlice({
             }
             if (state.selectedChat && state.selectedChat._id === action.payload.chatId) {
                 state.selectedChat.users = state.selectedChat.users.filter(u => u._id !== action.payload.userId);
+            }
+        },
+        setUnreadMessages(state, action) {
+            state.unReadMessages = action.payload;
+        },
+        clearUnreadForChat(state, action) {
+            delete state.unReadMessages[action.payload];
+        },
+        incrementUnread(state, action) {
+            const { chatId } = action.payload;
+            if (state.unReadMessages[chatId]) {
+                state.unReadMessages[chatId]++;
+            } else {
+                state.unReadMessages[chatId] = 1;
             }
         }
     }

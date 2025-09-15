@@ -75,7 +75,6 @@ const ChatBox = ({ handleSwitch }) => {
 
         socket.on("receiveMessage", (message) => {
             if (message.chat?._id === selectedChat._id) {
-                console.log("📥 from io:", message);
                 dispatch(chatsActions.addMessage(message));
             }
         });

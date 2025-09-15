@@ -1,6 +1,6 @@
 import { formatTime } from "../../utils/formatTime";
 
-const UserCard = ({ isSelected = false, avatar, title, subtitle, time, onClick }) => {
+const UserCard = ({ isSelected = false, avatar, title, subtitle, time, unreadCount = 0, onClick }) => {
     return (
         <div
             onClick={onClick}
@@ -26,11 +26,18 @@ const UserCard = ({ isSelected = false, avatar, title, subtitle, time, onClick }
                         </span>
                     )}
                 </div>
-                {subtitle && (
-                    <div className="truncate text-sm text-gray-500 sm:text-base">
-                        {subtitle}
-                    </div>
-                )}
+                <div className="flex items-center justify-between">
+                    {subtitle && (
+                        <div className="truncate text-sm text-gray-500 sm:text-base">
+                            {subtitle}
+                        </div>
+                    )}
+                    {unreadCount > 0 && (
+                        <span className="mr-4 text-xs font-semibold px-2 py-0.5 rounded-full text-white bg-gradient-to-br from-[#00BFA6] to-[#0AE2C3]">
+                            {unreadCount}
+                        </span>
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -11,6 +11,7 @@ import { chatsActions } from "../../store/chatsSlice";
 import { uiActions } from "../../store/uiSlice";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
 import { Users } from "lucide-react";
+import socket from "../../utils/socket";
 
 const MyChats = ({ handleSwitch }) => {
 
@@ -18,7 +19,7 @@ const MyChats = ({ handleSwitch }) => {
     const isDesktop = useIsDesktop();
 
     const [loading, setLoading] = useState(true);
-    const { chats, suggestedUsers, selectedChat } = useSelector(
+    const { chats, suggestedUsers, selectedChat, unReadMessages, incrementUnread } = useSelector(
         (state) => state.chats
     );
     const { user } = useSelector(state => state.auth);
@@ -82,10 +83,28 @@ const MyChats = ({ handleSwitch }) => {
         }
     }, []);
 
+    const fetchUnreadCounts = useCallback(async () => {
+        try {
+            const res = await axios.get(
+                `${import.meta.env.VITE_API_URL}/api/v1/message/unread`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
+
+            dispatch(chatsActions.setUnreadMessages(res.data.data.unread));
+        } catch (err) {
+            console.log(err.response?.data?.message || "Failed to fetch unread counts");
+        }
+    }, []);
+
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
             await fetchChats();
+            await fetchUnreadCounts();
             await fetchSuggestedUsers();
             setLoading(false);
         };
@@ -97,7 +116,7 @@ const MyChats = ({ handleSwitch }) => {
             {modalType === "group-chat" && <CreateGroupChat />}
             <div className="sticky top-0 z-40 bg-white/70 w-full flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-800">All Chats</h2>
-                <button 
+                <button
                     className="py-2 px-4 inline-flex items-center justify-center gap-2 rounded-xl font-semibold text-white bg-gradient-to-br from-[#00BFA6] to-[#0AE2C3] shadow-lg transform active:scale-95 transition cursor-pointer"
                     onClick={openGroupChatModel}
                 >
@@ -130,8 +149,11 @@ const MyChats = ({ handleSwitch }) => {
                                             title={chat.isGroupChat ? chat.chatName : otherUser?.username}
                                             subtitle={chat.latestMessage?.content || "No messages yet"}
                                             time={chat.latestMessage ? chat.latestMessage.createdAt : ""}
+                                            unreadCount={unReadMessages[chat._id] || 0}
                                             onClick={() => {
                                                 dispatch(chatsActions.setSelectedChat(chat));
+                                                dispatch(chatsActions.clearUnreadForChat(chat._id));
+                                                socket.emit("markAsRead", { chatId: chat._id, userId: user._id });
                                                 if (!isDesktop) handleSwitch("right");
                                             }}
                                         />
