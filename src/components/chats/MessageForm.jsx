@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import axios from "axios";
 
 import { chatsActions } from "../../store/chatsSlice";
+import socket from "../../utils/socket";
 import { Send } from "lucide-react";
 
 const MessageForm = ({ chatId }) => {
@@ -28,7 +29,8 @@ const MessageForm = ({ chatId }) => {
             );
 
             const message = res.data.data.message;
-            dispatch(chatsActions.addMessage(message));
+            // dispatch(chatsActions.addMessage(message));
+            socket.emit("sendMessage", message);
             resetForm();
         } catch (err) {
             console.log(err.response?.data?.message || "Failed to send message");

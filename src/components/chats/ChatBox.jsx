@@ -7,6 +7,7 @@ import GroupProfileModal from "../profile/GroupProfileModal";
 import MessageForm from "./MessageForm";
 import ChatBubble from "./ChatBubble";
 import { useIsDesktop } from "../../hooks/useIsDesktop";
+import socket from "../../utils/socket";
 import { uiActions } from "../../store/uiSlice";
 import { chatsActions } from "../../store/chatsSlice";
 import { ArrowLeft, Eye, MessageSquare } from "lucide-react";
@@ -62,6 +63,23 @@ const ChatBox = ({ handleSwitch }) => {
         };
         loadData();
     }, [fetchMessages]);
+
+    useEffect(() => {
+        if (!selectedChat?._id) return;
+
+        socket.emit("joinChat", selectedChat._id);
+
+        socket.on("receiveMessage", (message) => {
+            if (message.chat?._id === selectedChat._id) {
+                console.log("📥 from io:", message);
+                dispatch(chatsActions.addMessage(message));
+            }
+        });
+
+        return () => {
+            socket.off("receiveMessage");
+        };
+    }, [selectedChat?._id, dispatch]);
 
     return (
         <div className="flex-1 h-full flex flex-col">
