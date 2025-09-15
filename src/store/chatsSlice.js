@@ -46,7 +46,7 @@ const chatsSlice = createSlice({
             state.messages = action.payload;
         },
         addMessage(state, action) {
-            state.messages.push(action.payload);
+            state.messages.unshift(action.payload);
         },
         addUserToChat(state, action) {
             const chat = state.chats.find(c => c._id === action.payload.chatId);

@@ -128,7 +128,7 @@ const ChatBox = ({ handleSwitch }) => {
                                 <p>Loading messages</p>
                             </div>
                         ) : messages.length > 0 ? (
-                            <div className="flex-1 px-4 py-2 flex flex-col-reverse gap-1 overflow-y-auto gap-1">
+                            <div className="flex-1 px-4 py-2 flex flex-col-reverse gap-1 overflow-y-auto gap-2">
                                 {
                                     messages.map((msg, i) => {
                                         const isOwnMessage = msg?.sender?._id === user?._id;
