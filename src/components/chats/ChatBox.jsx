@@ -21,12 +21,15 @@ const ChatBox = ({ handleSwitch }) => {
     const { modalType } = useSelector(state => state.ui);
     const { user } = useSelector((state) => state.auth);
 
-    const [loading, setLoading] = useState(false);
-    const [typingUsers, setTypingUsers] = useState([]);
-
     const otherUser = selectedChat?.isGroupChat
         ? null
         : selectedChat?.users?.find((u) => u._id !== user._id);
+
+    const [loading, setLoading] = useState(false);
+    const [typingUsers, setTypingUsers] = useState([]);
+    const [otherUserStatus, setOtherUserStatus] = useState(
+        otherUser ? otherUser.isOnline : false
+    );
 
     const viewProfileModel = () => {
         if (selectedChat.isGroupChat) {
@@ -100,6 +103,22 @@ const ChatBox = ({ handleSwitch }) => {
         };
     }, []);
 
+    useEffect(() => {
+        if (!otherUser) return;
+
+        const handleStatusUpdate = ({ userId, isOnline }) => {
+            if (userId === otherUser._id) {
+                setOtherUserStatus(isOnline);
+            }
+        };
+
+        socket.on("updateUserStatus", handleStatusUpdate);
+
+        return () => {
+            socket.off("updateUserStatus", handleStatusUpdate);
+        };
+    }, [otherUser]);
+
     return (
         <div className="flex-1 h-full flex flex-col">
             {modalType === "view-profile" && <ProfileModal user={otherUser} />}
@@ -130,7 +149,14 @@ const ChatBox = ({ handleSwitch }) => {
                                         : otherUser?.username || "Unknown"}
                                 </h2>
                                 <span className="text-xs text-gray-500">
-                                    {selectedChat?.isGroupChat ? "Group chat" : "Active now"}
+                                    <span className="text-xs text-gray-500">
+                                        {selectedChat?.isGroupChat
+                                            ? "Group chat"
+                                            : otherUserStatus
+                                                ? "Active now"
+                                                : "Offline"
+                                        }
+                                    </span>
                                 </span>
                             </div>
                         </div>

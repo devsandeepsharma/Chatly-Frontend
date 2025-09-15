@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 import { authActions } from "../../store/authSlice";
+import socket from "../../utils/socket";
 
 const Layout = () => {
 
@@ -29,6 +30,7 @@ const Layout = () => {
                 );
 
                 dispatch(authActions.login(res.data.data.user));
+                socket.emit("userOnline", res.data.data.user._id);
             } catch (err) {
                 localStorage.removeItem("token");
                 dispatch(authActions.logout());
