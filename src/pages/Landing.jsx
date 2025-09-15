@@ -1,5 +1,14 @@
+import AuthHeader from "../components/layout/AuthHeader";
+import Footer from "../components/layout/Footer";
+
 const Landing = () => {
-    return <h2 className="font-medium text-2xl">Landing Page</h2>
+    return (
+        <>
+            <AuthHeader />
+            <h1 className="text-2xl text-green-600">Landing Page</h1>
+            <Footer />
+        </>
+    )
 }
 
 export default Landing;
