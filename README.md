@@ -5,8 +5,6 @@ Chatly is a modern **real-time chat application** built for seamless conversatio
 🔗 **Live Preview**: [Chatly Frontend](https://chatly-frontend-six.vercel.app/)  
 🔗 **Backend Repository**: [Chatly Backend](https://github.com/devsandeepsharma/Chatly-Backend)  
 
----
-
 ## 🛠 Built With  
 
 - React.js (Vite)  
@@ -15,11 +13,9 @@ Chatly is a modern **real-time chat application** built for seamless conversatio
 - Formik + Yup  
 - Axios  
 - Socket.io-client  
-- Framer Motion  
-- ShadCN/UI  
+- Cloudinary
+- Framer Motion   
 - Lucide React Icons  
-
----
 
 ## ✨ Features  
 
@@ -29,11 +25,10 @@ Chatly is a modern **real-time chat application** built for seamless conversatio
 - Online / Offline user presence
 - Search users to start a new conversation  
 - User profile editing (update name, avatar, etc.)  
+- Custom profile image upload using Cloudinary
 - Group management — create groups, add/remove members  
-- Smooth **Framer Motion animations**  
-- Fully **responsive UI** for desktop & mobile  
-
----
+- Smooth Framer Motion animations
+- Fully responsive UI for desktop & mobile  
 
 ## 📸 Preview  
 

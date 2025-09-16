@@ -47,7 +47,7 @@ const Landing = () => {
                         viewport={{ once: true, amount: 0.3 }}
                     >
                         <motion.h2 variants={fadeIn} className="text-2xl md:text-3xl font-bold text-center mb-3">Everything you need</motion.h2>
-                        <motion.p variants={fadeIn} className="text-center text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-10">
+                        <motion.p variants={fadeIn} className="text-center text-gray-600 max-w-2xl mx-auto mb-10">
                             Built for speed and simplicity. Powerful features wrapped in a minimal UI.
                         </motion.p>
 
