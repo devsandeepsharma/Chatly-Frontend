@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { cardVariant } from "../animation/Animation";
 import Logo from "../components/ui/Logo";
-import StepEmail from "../components/auth/stepEmail";
+import StepEmail from "../components/auth/StepEmail";
 import StepOTP from "../components/auth/StepOTP";
 import StepProfile from "../components/auth/StepProfile";
 
